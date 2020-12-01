@@ -1,0 +1,126 @@
+use o2o;
+
+create table tb_area (
+    area_id int(2) Not Null auto_increment,
+    area_name varchar(200) not null, priority int(2) not null default '0',
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    primary key (area_id),
+    unique key UK_AREA(area_name)
+) engine = InnoDB auto_increment = 1 default charset=utf8;
+
+create table tb_userInfo (
+    user_id int(10) Not Null auto_increment,
+    name varchar(32) default null,
+    profile_img varchar(1024) default null,
+    email varchar(1024) default null,
+    gender varchar(2) default null,
+    enable_status int(2) not null default 0 comment '0: not allowed to use, 1: allowed to use',
+    user_type int(2) not null default 1 comment '1. customer  2. store admin 3. system admin',
+    create_time datetime default null, last_edit_time datetime default null, primary key (user_id)
+    ) engine = InnoDB auto_increment = 1 default charset=utf8;
+
+create table tb_wechat_auth (
+    wechat_auth_id int(10) Not Null auto_increment,
+    user_id int(10) not null,
+    open_id varchar(1024) not null,
+    create_time datetime default null,
+    primary key (wechat_auth_id),
+    constraint fk_wechatauth_profile foreign key(user_id) references tb_userinfo(user_id)
+) engine = InnoDB auto_increment = 1 default charset=utf8;
+
+create table tb_local_auth (
+    local_auth_id int(10) not null auto_increment,
+    user_id int(10) not null unique index,
+    username varchar(128) not null,
+    password varchar(128) not null,
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    primary key (local_auth_id),
+    unique key uk_local_profile(username),
+    constraint fk_localauth_profile foreign key(user_id) references tb_userinfo(user_id)
+) engine = InnoDB auto_increment = 1 default charset=utf8;
+
+create table tb_headline (
+	line_id int(100) not null auto_increment,
+    line_name varchar(1000) default null,
+    line_link varchar(2000) not null,
+    line_img varchar(2000) not null,
+    priority int(2) default null,
+    enable_status int(2) not null default '0',
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    primary key (line_id)
+) engine=InnoDB auto_increment = 1 default charset = utf8;
+
+create table tb_store_category (
+	store_category_id int(11) not null auto_increment,
+    store_category_name varchar(100) not null default '',
+    store_category_desc varchar(1000) default '',
+    store_category_img varchar(2000) default null,
+    priority int(2) not null default '0',
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    parent_id int(11) default null,
+    primary key(store_category_id),
+    constraint fk_store_category_self foreign key (parent_id) references tb_store_category(store_category_id)
+) engine = InnoDB auto_increment = 1 default charset = utf8;
+
+create table tb_store (
+	store_id int(10) not null auto_increment,
+    owner_id int(10) not null comment 'Store owner',
+    area_id int(5) default null,
+    store_category_id int(11) default null,
+    store_name varchar(256) not null,
+    store_desc varchar(1024) default null,
+    store_addr varchar(200) default null,
+    phone varchar(128) default null,
+    store_img varchar(1024) default null,
+    priority int(3) not null default '0',
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    enable_status int(2) not null default '0',
+    advice varchar(255) default null,
+    primary key(store_id),
+    constraint fk_store_area foreign key (area_id) references tb_area(area_id),
+    constraint fk_store_profile foreign key (owner_id) references tb_userinfo(user_id),
+    constraint fk_store_category foreign key (store_category_id) references tb_store_category(store_category_id)
+) engine = InnoDB auto_increment = 1 default charset = utf8;
+
+create table tb_product_category (
+	product_category_id int(11) not null auto_increment,
+    product_category_name varchar(100) not null,
+    priority int(2) default '0',
+    store_id int(20) not null default '0',
+    primary key(product_category_id),
+    constraint fk_procate_store foreign key (store_id) references tb_store(store_id)
+) engine = InnoDB auto_increment = 1 default charset = utf8;
+
+create table tb_product (
+	product_id int(100) not null auto_increment,
+    product_name varchar(100) not null ,
+    product_desc varchar(2000) default null,
+    img_addr varchar(2000) default '',
+    normal_price varchar(100) default null,
+    promotion_price varchar(100) default null,
+    priority int(2) not null default '0',
+    create_time datetime default null,
+    last_edit_time datetime default null,
+    enable_status int(2) not null default '0',
+    product_category_id int(11) default null,
+    store_id int(20) not null default '0',
+    primary key (product_id),
+    constraint fk_product_procate foreign key (product_category_id) references tb_product_category(product_category_id),
+    constraint fk_product_store foreign key (store_id) references tb_store(store_id)
+) engine = InnoDB auto_increment = 1 default charset = utf8;
+
+create table tb_product_img (
+	product_img_id int(20) not null auto_increment,
+    img_addr varchar(2000) not null,
+    img_desc varchar(2000) default null,
+    priority int(2) default '0',
+    create_time datetime default null,
+    product_id int(20) default null,
+    primary key(product_img_id),
+    constraint fk_proimg_product foreign key (product_id) references tb_product (product_id)
+) engine = InnoDB auto_increment = 1 default charset = utf8;

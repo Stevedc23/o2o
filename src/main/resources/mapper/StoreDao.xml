@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.o2o.dao.StoreDao">
+    <insert id="insertStore" useGeneratedKeys="true" keyColumn="store_id" keyProperty="storeId">
+        INSERT INTO tb_store
+        ( owner_id, area_id, store_category_id, store_name, store_desc, store_addr, phone, store_img, priority, create_time,
+        last_edit_time, enable_status, advice)
+        VALUES
+        (#{owner.userId}, #{area.areaId}, #{storeCategory.storeCategoryId}, #{storeName}, #{storeDesc}, #{storeAddr}, #{phone}, #{storeImg}, #{priority},
+        #{createTime}, #{lastEditTime}, #{enableStatus}, #{advice})
+    </insert>
+
+    <update id="updateStore" parameterType="com.o2o.entity.Store">
+        UPDATE tb_store
+        <set>
+            <if test="storeName != null">store_name=#{storeName},</if>
+            <if test="storeDesc != null">store_desc=#{storeDesc},</if>
+            <if test="storeAddr != null">store_addr=#{storeAddr},</if>
+            <if test="phone != null">phone=#{phone},</if>
+            <if test="storeImg != null">store_img=#{storeImg},</if>
+            <if test="priority != null">priorioty=#{priority},</if>
+            <if test="lastEditTime != null">last_edit_time=#{lastEditTime},</if>
+            <if test="enableStatus != null">enable_status=#{enableStatus},</if>
+            <if test="advice != null">advice=#{advice},</if>
+            <if test="area != null">area_id=#{area.areaId},</if>
+            <if test="storeCategory != null">store_category_id =#{storeCategory.storeCategoryId}</if>
+        </set>
+        WHERE store_id=#{storeId}
+    </update>
+</mapper>

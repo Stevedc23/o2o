@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.o2o.dao.StoreDao">
+    <insert id="insertStore" useGeneratedKeys="true" keyColumn="store_id" keyProperty="storeId">
+        INSERT INTO tb_sore ( owner_id, area_id, store_category_id, store_name, store_desc, store_addr, phone, sotre_img, priority, create_time,
+        last_edit_time, enable_status, advice)
+        VALUES
+        (#{owner.userId}, #{area.areaId}, #{storeCategory.storeCategoryId}, #{storeName}, #{storeDesc}, #{sotreAddr}, #{phone}, #{storeImg}, #{priority},
+        #{createTIme}, #{lastEditTime}, #{enableStatus}, #{advice})
+    </insert>
+</mapper>

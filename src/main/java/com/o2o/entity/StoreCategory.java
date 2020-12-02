@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class StoreCategory {
 
-    private Long storyCategoryId;
+    private Long storeCategoryId;
     private String storeCategoryName;
     private String storeCategoryDesc;
     private String storeCategoryImg;
@@ -13,12 +13,12 @@ public class StoreCategory {
     private Date lastEditTime;
     private StoreCategory parent;
 
-    public Long getStoryCategoryId() {
-        return storyCategoryId;
+    public Long getStoreCategoryId() {
+        return storeCategoryId;
     }
 
-    public void setStoryCategoryId(Long storyCategoryId) {
-        this.storyCategoryId = storyCategoryId;
+    public void setStoreCategoryId(Long storeCategoryId) {
+        this.storeCategoryId = storeCategoryId;
     }
 
     public String getStoreCategoryName() {

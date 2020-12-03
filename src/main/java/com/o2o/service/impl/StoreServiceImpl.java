@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 
 @Service
@@ -23,7 +24,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public StoreExecution addStore(Store store, File storeImg) {
+    public StoreExecution addStore(Store store, InputStream storeImgInputStream, String fileName) throws StoreOperationException {
         if(store == null) {
             return new StoreExecution(StoreStateEnum.NULL_STORE);
         }
@@ -35,10 +36,10 @@ public class StoreServiceImpl implements StoreService {
             if(effectedNum <= 0) {
                 throw new StoreOperationException("Create Store Failed");
             } else {
-                if(storeImg != null) {
+                if(storeImgInputStream != null) {
                     //save store images
                     try {
-                        addStoreImg(store, storeImg);
+                        addStoreImg(store, storeImgInputStream, fileName);
                     } catch (Exception e) {
                         throw new StoreOperationException("addStoreImg error:" + e.getMessage());
                     }
@@ -57,11 +58,11 @@ public class StoreServiceImpl implements StoreService {
         return new StoreExecution(StoreStateEnum.CHECK, store);
     }
 
-    private void addStoreImg(Store store, File storeImg) {
+    private void addStoreImg(Store store, InputStream storeImgInputStream, String fileName) {
 
         //Get relative path of store images
         String desc = PathUtil.getStoreImagePath(store.getStoreId());
-        String storeImgAddr = ImageUtil.generateThumbnail(storeImg, desc);
+        String storeImgAddr = ImageUtil.generateThumbnail(storeImgInputStream, fileName, desc);
         store.setStoreImg(storeImgAddr);
     }
 }

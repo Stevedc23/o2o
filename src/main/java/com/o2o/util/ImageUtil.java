@@ -9,6 +9,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -40,20 +41,21 @@ public class ImageUtil {
     }
     /**
      * Process the thumbnail and return the relative path of the newly generated image
-     * @param thumbnail
+     * @param thumbnailInputStream
+     * @param fileName
      * @param targetAddr
      * @return
      */
-    public static String generateThumbnail(File thumbnail, String targetAddr) {
+    public static String generateThumbnail(InputStream thumbnailInputStream,String fileName, String targetAddr) {
         String realFileName = getRandomFileName();
-        String extension = getFileExtension(thumbnail);
+        String extension = getFileExtension(fileName);
         makeDirPath(targetAddr);
         String relativeAddr = targetAddr + realFileName + extension;
         logger.debug("current relativeAddr is : " + relativeAddr);
         File dest = new File((PathUtil.getImgBasePath() + relativeAddr));
         logger.debug("current complete addr is : " + PathUtil.getImgBasePath() + relativeAddr);
         try {
-            Thumbnails.of(thumbnail).size(200,200)
+            Thumbnails.of(thumbnailInputStream).size(200,200)
                     .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "/watermark.jpg")), 0.25f)
                     .outputQuality(0.8f).toFile(dest);
         } catch (IOException e) {
@@ -78,19 +80,18 @@ public class ImageUtil {
 
     /**
      * get the input file's extension
-     * @param cFile
+     * @param fileName
      * @return
      */
-    private static String getFileExtension(File cFile) {
-        String originalFIleName = cFile.getName();
-        return originalFIleName.substring(originalFIleName.lastIndexOf("."));
+    private static String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
     /**
      * create random file name: current time + 5 random number
      * @return
      */
-    private static String getRandomFileName() {
+    public static String getRandomFileName() {
         int rannum = r.nextInt(89999) + 10000;
         String nowTimeStr = sDateFormat.format(new Date());
         return nowTimeStr + rannum;

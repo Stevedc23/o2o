@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+
 public class ImageUtil {
 
     private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -46,7 +47,7 @@ public class ImageUtil {
      * @param targetAddr
      * @return
      */
-    public static String generateThumbnail(InputStream thumbnailInputStream,String fileName, String targetAddr) {
+    public static String generateThumbnail(InputStream thumbnailInputStream, String fileName, String targetAddr) {
         String realFileName = getRandomFileName();
         String extension = getFileExtension(fileName);
         makeDirPath(targetAddr);

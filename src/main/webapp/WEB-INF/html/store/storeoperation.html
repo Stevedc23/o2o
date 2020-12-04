@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SUI Mobile Demo</title>
+    <meta name="description" content="MSUI: Build mobile apps with simple HTML, CSS, and JS components.">
+    <meta name="author" content="阿里巴巴国际UED前端">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+
+</head>
+<body>
+<div class="page-group">
+    <div id="page-label-input" class="page">
+        <header class="bar bar-nav">
+            <a class="button button-link button-nav pull-left back" href="/demos/form">
+                <span class="icon icon-left"></span>
+                Back
+            </a>
+            <h1 class="title">Store Information</h1>
+        </header>
+        <div class="content">
+            <div class="list-block">
+                <ul>
+                    <!-- Store name -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Store Name</div>
+                                <div class="item-input">
+                                    <input id="store-name" type="text" placeholder="Store name">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Store Category Dropdown List -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Store Category</div>
+                                <div class="item-input">
+                                    <select id="store-category">
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Area Dropdown List -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Area</div>
+                                <div class="item-input">
+                                    <select id="area">
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Store Address Text -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Store Address</div>
+                                <div class="item-input">
+                                    <input id="store-addr" type="text" placeholder="Store Address">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Phone Text -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Phone</div>
+                                <div class="item-input">
+                                    <input id="store-phone" type="text" placeholder="Phone">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Thumbnail -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Store Image</div>
+                                <div class="item-input">
+                                    <input id="store-img" type="file">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Store Description TextArea -->
+                    <li class="align-top">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">Store Description</div>
+                                <div class="item-input">
+                                    <textarea id="store-desc" placeholder="Store Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Verification code  kaptcha-->
+
+                </ul>
+            </div>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-50"><a href="#" class="button button-big button-fill button-danger">Back</a></div>
+                    <div class="col-50"><a href="#" class="button button-big button-fill button-success" id="submit">Submit</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type='text/javascript' src='../resources/js/shop/shopoperation.js' charset='utf-8'></script>
+</body>
+</html>

@@ -2,10 +2,14 @@ package com.o2o.controller.storeadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.o2o.dto.StoreExecution;
+import com.o2o.entity.Area;
 import com.o2o.entity.Store;
+import com.o2o.entity.StoreCategory;
 import com.o2o.entity.UserInfo;
 import com.o2o.enums.StoreStateEnum;
 import com.o2o.exceptions.StoreOperationException;
+import com.o2o.service.AreaService;
+import com.o2o.service.StoreCategoryService;
 import com.o2o.service.StoreService;
 import com.o2o.util.HttpServletRequestUtil;
 import com.o2o.util.ImageUtil;
@@ -21,7 +25,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -139,4 +145,31 @@ public class StoreManagementController {
         }
 
     }
+
+    @Autowired
+    private StoreCategoryService storeCategoryService;
+
+    @Autowired
+    private AreaService areaService;
+
+    @RequestMapping(value = "/getstoreinitinfo", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getStoreInitInfo() {
+
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        List<StoreCategory> storeCategoryList = new ArrayList<StoreCategory>();
+        List<Area> areaList = new ArrayList<Area>();
+        try {
+            storeCategoryList = storeCategoryService.getStoreCategorylist(new StoreCategory());
+            areaList = areaService.getAreaList();
+            modelMap.put("storeCategoryList", storeCategoryList);
+            modelMap.put("areaList", areaList);
+            modelMap.put("success", true);
+        } catch (Exception e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+        }
+        return modelMap;
+    }
+
 }

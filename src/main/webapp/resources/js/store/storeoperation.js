@@ -1,3 +1,4 @@
+
 $(function() {
     var initUrl = '/o2o/storeadmin/getstoreinitinfo';
     var registerStoreUrl = 'o2o/storeadmin/registerstore';
@@ -14,7 +15,7 @@ $(function() {
                 data.storeCategoryList.map(function(item, index){
                     tempHtml += '<option data-id="' + item.storeCategoryId + '">' + item.storeCategoryName + '</option>';
                 });
-                data.areaList.map(function (item, index) {
+                data.areaList.map(function(item, index) {
                     tempAeaHtml += '<option data-id="' + item.areaId + '">' + item.areaName + '</option>';
                 });
 

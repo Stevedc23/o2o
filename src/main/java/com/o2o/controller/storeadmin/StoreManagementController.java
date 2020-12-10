@@ -11,6 +11,7 @@ import com.o2o.exceptions.StoreOperationException;
 import com.o2o.service.AreaService;
 import com.o2o.service.StoreCategoryService;
 import com.o2o.service.StoreService;
+import com.o2o.util.CodeUtil;
 import com.o2o.util.HttpServletRequestUtil;
 import com.o2o.util.ImageUtil;
 import com.o2o.util.PathUtil;
@@ -67,6 +68,11 @@ public class StoreManagementController {
     private Map<String,Object> registerStore(HttpServletRequest request) {
 
         Map<String, Object> modelMap = new HashMap<String, Object>();
+        if(!CodeUtil.checkVerifyCode(request)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "Wrong Verification Code");
+            return modelMap;
+        }
 
         //Receive and convert store and image info
         String storeStr = HttpServletRequestUtil.getString(request, "storeStr");

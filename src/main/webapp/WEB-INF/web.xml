@@ -53,6 +53,11 @@
       <param-value>Arial</param-value>
     </init-param>
   </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Kaptcha</servlet-name>
+    <url-pattern>/Kaptcha</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>spring-dispatcher</servlet-name>

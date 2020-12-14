@@ -3,6 +3,40 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.o2o.dao.StoreDao">
+    
+    <resultMap id="storeMap" type="com.o2o.entity.Store">
+        <id column="store_id" property="storeId" />
+        <result column="store_name" property="storeName" />
+        <result column="store_desc" property="storeDesc" />
+        <result column="store_addr" property="storeAddr" />
+        <result column="phone" property="phone"/>
+        <result column="store_img" property="storeImg" />
+        <result column="priority" property="priority" />
+        <result column="create_time" property="createTime"/>
+        <result column="last_edit_time" property="lastEditTime" />
+        <result column="enable_status" property="enableStatus" />
+        <result column="advice" property="advice" />
+        <association property="area" column="area_id" javaType="com.o2o.entity.Area" >
+            <id column="area_id" property="areaId" />
+            <result column="area_name" property="areaName"/>
+        </association>
+        <association property="storeCategory" column="store_category_id" javaType="com.o2o.entity.StoreCategory" >
+            <id column="store_category_id" property="storeCategoryId" />
+            <result column="store_category_name" property="storeCategoryName" />
+        </association>
+        <association property="owner" column="user_id" javaType="com.o2o.entity.UserInfo" >
+            <id column="userId" property="userId" />
+            <result column="name" property="name" />
+        </association>
+    </resultMap>
+    
+    <select id="queryByStoreId" resultMap="storeMap" parameterType="Long">
+        SELECT s.store_id, s.store_name, s.store_desc, s.store_addr, s.phone, s.store_img, s.priority, s.create_time,
+               s.last_edit_time, s.enable_status, s.advice, a.area_id, a.area_name, sc.store_category_id, sc.store_category_name
+        FROM tb_store s, tb_area a, tb_store_category sc
+        WHERE s.area_id = a.area_id AND s.store_category_id = sc.store_category_id AND s.store_id = #{storeId}
+    </select>
+
     <insert id="insertStore" useGeneratedKeys="true" keyColumn="store_id" keyProperty="storeId">
         INSERT INTO tb_store
         ( owner_id, area_id, store_category_id, store_name, store_desc, store_addr, phone, store_img, priority, create_time,

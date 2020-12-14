@@ -9,5 +9,13 @@ import java.io.InputStream;
 
 public interface StoreService {
 
+    /**
+     * Store registration
+     * @param store
+     * @param storeImgInputStream
+     * @param fileName
+     * @return
+     * @throws StoreOperationException
+     */
     StoreExecution addStore(Store store, InputStream storeImgInputStream, String fileName) throws StoreOperationException;
 }

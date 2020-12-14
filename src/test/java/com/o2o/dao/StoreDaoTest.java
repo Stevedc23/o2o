@@ -47,6 +47,7 @@ public class StoreDaoTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void testUpdateStore(){
         Store store = new Store();
         store.setStoreId(1L);
@@ -57,5 +58,13 @@ public class StoreDaoTest extends BaseTest {
 
         int effectedNum = storeDao.updateStore(store);
         assertEquals(1,effectedNum);
+    }
+
+    @Test
+    public void testQueryByStoreId() {
+        long storeId = 1;
+        Store store = storeDao.queryByStoreId(storeId);
+        System.out.println("areaId: " + store.getArea().getAreaId());
+        System.out.println("areaName: " + store.getArea().getAreaName());
     }
 }

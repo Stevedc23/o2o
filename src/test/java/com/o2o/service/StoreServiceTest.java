@@ -8,6 +8,7 @@ import com.o2o.entity.StoreCategory;
 import com.o2o.entity.UserInfo;
 import com.o2o.enums.StoreStateEnum;
 import com.o2o.exceptions.StoreOperationException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +26,19 @@ public class StoreServiceTest extends BaseTest {
     private StoreService storeService;
 
     @Test
+    public void testModifyStore() throws StoreOperationException, FileNotFoundException {
+        Store store = new Store();
+        store.setStoreId(1L);
+        store.setStoreName("Pang Ya mart");
+
+        File storeImg = new File("F:\\Java\\ohayo.jpg");
+        InputStream is = new FileInputStream(storeImg);
+        StoreExecution storeExecution = storeService.modifyStore(store, is, "ohayo.jpg");
+        System.out.println("New Pic address : " + storeExecution.getStore().getStoreImg());
+    }
+
+    @Test
+    @Ignore
     public void testAddStore() throws StoreOperationException, FileNotFoundException {
         Store store = new Store();
         UserInfo owner = new UserInfo();

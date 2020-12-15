@@ -18,4 +18,22 @@ public interface StoreService {
      * @throws StoreOperationException
      */
     StoreExecution addStore(Store store, InputStream storeImgInputStream, String fileName) throws StoreOperationException;
+
+    /**
+     *
+     * @param storeId
+     * @return
+     */
+    Store getByStoreId(long storeId);
+
+    /**
+     *  Update store
+     * @param store
+     * @param storeImgInputStream
+     * @param fileName
+     * @return
+     * @throws StoreOperationException
+     */
+    StoreExecution modifyStore(Store store, InputStream storeImgInputStream, String fileName) throws StoreOperationException;
+
 }

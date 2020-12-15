@@ -58,6 +58,38 @@ public class StoreServiceImpl implements StoreService {
         return new StoreExecution(StoreStateEnum.CHECK, store);
     }
 
+    @Override
+    public Store getByStoreId(long storeId) {
+        return storeDao.queryByStoreId(storeId);
+    }
+
+    @Override
+    public StoreExecution modifyStore(Store store, InputStream storeImgInputStream, String fileName) throws StoreOperationException {
+        if(store == null || store.getStoreId() == null) {
+            return new StoreExecution(StoreStateEnum.NULL_STORE);
+        } else {
+            try {
+                if (storeImgInputStream != null && fileName != null && !"".equals(fileName)) {
+                    Store tempStore = storeDao.queryByStoreId(store.getStoreId());
+                    if (tempStore.getStoreImg() != null) {
+                        ImageUtil.deleteFileOrPath(tempStore.getStoreImg());
+                    }
+                    addStoreImg(store, storeImgInputStream, fileName);
+                }
+                store.setLastEditTime(new Date());
+                int effectedNum = storeDao.updateStore(store);
+                if (effectedNum <= 0) {
+                    return new StoreExecution(StoreStateEnum.INNER_ERROR);
+                } else {
+                    store = storeDao.queryByStoreId(store.getStoreId());
+                    return new StoreExecution(StoreStateEnum.SUCCESS, store);
+                }
+            } catch (Exception e) {
+                throw new StoreOperationException("modifyStore error: " + e.getMessage());
+            }
+        }
+    }
+
     private void addStoreImg(Store store, InputStream storeImgInputStream, String fileName) {
 
         //Get relative path of store images

@@ -63,6 +63,55 @@ public class StoreManagementController {
     @Autowired
     private StoreService storeService;
 
+    @Autowired
+    private StoreCategoryService storeCategoryService;
+
+    @Autowired
+    private AreaService areaService;
+
+    @RequestMapping(value = "/getstorebyid", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getStoreById(HttpServletRequest request) {
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        Long storeId = HttpServletRequestUtil.getLong(request, "storeId");
+        if(storeId > -1) {
+            try {
+                Store store = storeService.getByStoreId(storeId);
+                List<Area> areaList = areaService.getAreaList();
+                modelMap.put("store", store);
+                modelMap.put("areaList", areaList);
+                modelMap.put("success", true);
+            }catch (Exception e) {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.toString());
+            }
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "Empty storeId");
+        }
+        return modelMap;
+    }
+
+    @RequestMapping(value = "/getstoreinitinfo", method = RequestMethod.GET)
+    @ResponseBody
+    private Map<String, Object> getStoreInitInfo() {
+
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        List<StoreCategory> storeCategoryList = new ArrayList<StoreCategory>();
+        List<Area> areaList = new ArrayList<Area>();
+        try {
+            storeCategoryList = storeCategoryService.getStoreCategorylist(new StoreCategory());
+            areaList = areaService.getAreaList();
+            modelMap.put("storeCategoryList", storeCategoryList);
+            modelMap.put("areaList", areaList);
+            modelMap.put("success", true);
+        } catch (Exception e) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", e.getMessage());
+        }
+        return modelMap;
+    }
+
     @RequestMapping(value = "/registerstore", method = RequestMethod.POST)
     @ResponseBody
     private Map<String,Object> registerStore(HttpServletRequest request) {
@@ -103,8 +152,7 @@ public class StoreManagementController {
         if(store != null && storeImg != null) {
 
             //Session TODO
-            UserInfo owner = new UserInfo();
-            owner.setUserId(1L);
+            UserInfo owner = (UserInfo) request.getSession().getAttribute("user");
             store.setOwner(owner);
 //            File storeImgFile = new File(PathUtil.getImgBasePath() + ImageUtil.getRandomFileName());
 //            try {
@@ -121,11 +169,20 @@ public class StoreManagementController {
 //                modelMap.put("errMsg", e.getMessage());
 //                return modelMap;
 //            }
-            StoreExecution se = null;
+            StoreExecution se;
             try {
                 se = storeService.addStore(store, storeImg.getInputStream(), storeImg.getOriginalFilename());
                 if(se.getState() == StoreStateEnum.CHECK.getState()) {
                     modelMap.put("success", true);
+                    @SuppressWarnings("unchecked")
+                    List<Store> storeList = (List<Store>) request.getSession().getAttribute("storeList");
+                    if(storeList == null || storeList.size() == 0) {
+                        storeList = new ArrayList<Store>();
+                        storeList.add(se.getStore());
+                        request.getSession().setAttribute("storeList", storeList);
+                    }
+                    storeList.add(se.getStore());
+                    request.getSession().setAttribute("storeList", storeList);
                 } else {
                     modelMap.put("success", false);
                     modelMap.put("errMsg", se.getStateInfo());
@@ -152,30 +209,69 @@ public class StoreManagementController {
 
     }
 
-    @Autowired
-    private StoreCategoryService storeCategoryService;
-
-    @Autowired
-    private AreaService areaService;
-
-    @RequestMapping(value = "/getstoreinitinfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/modifystore", method = RequestMethod.POST)
     @ResponseBody
-    private Map<String, Object> getStoreInitInfo() {
+    private Map<String,Object> modifyStore(HttpServletRequest request) {
 
         Map<String, Object> modelMap = new HashMap<String, Object>();
-        List<StoreCategory> storeCategoryList = new ArrayList<StoreCategory>();
-        List<Area> areaList = new ArrayList<Area>();
+        if(!CodeUtil.checkVerifyCode(request)) {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "Wrong Verification Code");
+            return modelMap;
+        }
+
+        //Receive and convert store and image info
+        String storeStr = HttpServletRequestUtil.getString(request, "storeStr");
+        ObjectMapper mapper = new ObjectMapper();
+        Store store = null;
+
         try {
-            storeCategoryList = storeCategoryService.getStoreCategorylist(new StoreCategory());
-            areaList = areaService.getAreaList();
-            modelMap.put("storeCategoryList", storeCategoryList);
-            modelMap.put("areaList", areaList);
-            modelMap.put("success", true);
+            store = mapper.readValue(storeStr, Store.class);
         } catch (Exception e) {
             modelMap.put("success", false);
             modelMap.put("errMsg", e.getMessage());
+            return modelMap;
         }
-        return modelMap;
-    }
 
+        CommonsMultipartFile storeImg = null;
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+
+        if(commonsMultipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            storeImg = (CommonsMultipartFile) multipartHttpServletRequest.getFile("storeImg");
+        }
+
+        // store registration
+        if(store != null && store.getStoreId() != null) {
+            //Session TODO
+            UserInfo owner = new UserInfo();
+            owner.setUserId(1L);
+            store.setOwner(owner);
+            StoreExecution se = null;
+            try {
+                if(storeImg == null) {
+                    se = storeService.modifyStore(store, null, null);
+                } else {
+                    se = storeService.modifyStore(store, storeImg.getInputStream(), storeImg.getOriginalFilename());
+                }
+                if(se.getState() == StoreStateEnum.SUCCESS.getState()) {
+                    modelMap.put("success", true);
+                } else {
+                    modelMap.put("success", false);
+                    modelMap.put("errMsg", se.getStateInfo());
+                }
+            } catch (StoreOperationException e){
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.getMessage());
+            } catch (IOException e) {
+                modelMap.put("success", false);
+                modelMap.put("errMsg", e.getMessage());
+            }
+            return modelMap;
+        } else {
+            modelMap.put("success", false);
+            modelMap.put("errMsg", "Please enter store ID");
+            return modelMap;
+        }
+    }
 }
